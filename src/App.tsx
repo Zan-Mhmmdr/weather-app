@@ -23,7 +23,7 @@ type WeatherData = {
 function App() {
   const apiKey = import.meta.env.VITE_API_KEY;
   const [data, setData] = useState<WeatherData | null>(null);
-  const [search, searchData] = useState<string>('');
+  const [search, searchData] = useState<string>('Bandung');
   const [error, setError] = useState<boolean>(false);
 
   const [debouncedValue] = useDebounce(search, 2000);
@@ -38,6 +38,7 @@ function App() {
         const data = await response.json();
         console.log(data);
         setData(data);
+        setError(false);
       } catch (error) {
         console.error('Error fetching data:', error);
         setError(true);
@@ -51,7 +52,7 @@ function App() {
 
   return (
     <>
-      <div className="container" style={{ height: !data ? '400px' : 'auto' }}>
+      <div className="container" style={{ height: !data ? '590px' : 'auto' }}>
         <div className="search-box">
           <i className="fa-solid fa-location-dot"></i>
           <input
@@ -65,14 +66,12 @@ function App() {
             className="fa-solid fa-magnifying-glass"></button>
         </div>
 
-        {!data && (
+        {error ? (
           <div className="not-found" style={{ animation: ' 0.5s ease-in-out forwards' }}>
             <img src="../src/assets/img/404.webp" />
             <h2>Location not found 😢</h2>
           </div>
-        )}
-
-        {data &&
+        ) : data && (
           <><div className="weather-box">
             <img src="../src/assets/img/awan2.webp" />
             <p className='temperature'>{Math.round(data.main.temp - 273.15)} <span>°C</span></p>
@@ -91,7 +90,7 @@ function App() {
                 <p>{data.wind.speed} km/h</p>
               </div>
             </div></>
-        }
+        )}
 
       </div>
     </>
