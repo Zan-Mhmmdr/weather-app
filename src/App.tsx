@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import './App.css'
+import { useDebounce } from '@uidotdev/usehooks';
 
 type WeatherData = {
   clouds: {
@@ -19,16 +20,18 @@ type WeatherData = {
 };
 
 
-
 function App() {
-  // const apiKey = import.meta.env.VITE_API_KEY;
+  const apiKey = import.meta.env.VITE_API_KEY;
   const [data, setData] = useState<WeatherData | null>(null);
   const [search, searchData] = useState<string>('');
+  const [error, setError] = useState<boolean>(false);
+
+  const [debouncedValue] = useDebounce(search, 2000);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=London&appid=${apiKey}`);
+        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${search}&appid=${apiKey}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -37,17 +40,18 @@ function App() {
         setData(data);
       } catch (error) {
         console.error('Error fetching data:', error);
+        setError(true);
       }
     };
 
     fetchData();
-  }, [])
+  }, [debouncedValue])
   console.log(search);
 
 
   return (
     <>
-      <div className="container">
+      <div className="container" style={{ height: !data ? '400px' : 'auto' }}>
         <div className="search-box">
           <i className="fa-solid fa-location-dot"></i>
           <input
@@ -62,12 +66,11 @@ function App() {
         </div>
 
         {!data && (
-          <div className="not-found">
-            <h2>Location not found</h2>
+          <div className="not-found" style={{ animation: ' 0.5s ease-in-out forwards' }}>
+            <img src="../src/assets/img/404.webp" />
+            <h2>Location not found 😢</h2>
           </div>
         )}
-
-
 
         {data &&
           <><div className="weather-box">
@@ -80,12 +83,12 @@ function App() {
               <div className="humadity">
                 <i className="fa-solid fa-water"></i>
                 <span>Humidity</span>
-                <p>82%</p>
+                <p>{data.main.humidity}%</p>
               </div>
               <div className="wind">
                 <i className="fa-solid fa-wind"></i>
                 <span>Wind Speed</span>
-                <p>1.5 km/h</p>
+                <p>{data.wind.speed} km/h</p>
               </div>
             </div></>
         }

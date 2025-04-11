@@ -23,6 +23,7 @@ body {
     position: relative;
     background: #fff;
     width: 500px;
+    height: 110px;
     padding: 28px 32px;
     border-radius: 20px;
     box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
@@ -81,6 +82,19 @@ body {
 
 .not-found {
     text-align: center;
+    width: 100%;
+
+}
+
+.not-found img {
+    width: 50%;
+    margin-top: 30px;
+}
+
+.not-found h2 {
+    color: #06283D;
+    font-size: 1.6rem;
+    font-weight: 500;
 }
 
 .weather-box {
@@ -159,14 +173,19 @@ body {
 }
 
 
-.fadeIn{
+.fadeIn {
     animation: 0.5s fadeIn forwards;
     animation-delay: 0.5s;
 }
 
-@keyframes fadeIn{
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
     to {
-        scale: 1;
         opacity: 1;
+        transform: scale(1);
     }
 }
